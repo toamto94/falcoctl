@@ -203,6 +203,7 @@ func Download(ctx context.Context,
 	driverName string,
 	driverType drivertype.DriverType,
 	driverVer string, repos []string,
+	httpHeaders string,
 ) (string, error) {
 	driverFileName := toFilename(d, &kr, driverName, driverType)
 	// Skip if existent
@@ -218,6 +219,17 @@ func Download(ctx context.Context,
 		printer.Logger.Info("Trying to download a driver.", printer.Logger.Args("url", url))
 
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+		if httpHeaders != "" {
+			header := http.Header{}
+			for _, h := range strings.Split(httpHeaders, ",") {
+				key, value := func() (string, string) {
+					x := strings.Split(h, ":")
+					return x[0], x[1]
+				}()
+				header.Add(key, value)
+			}
+			req.Header = header
+		}
 		if err != nil {
 			printer.Logger.Warn("Error creating http request.", printer.Logger.Args("err", err))
 			continue
