@@ -20,10 +20,12 @@ TEST_FLAGS ?= -v -cover# -race
 
 falcoctl:
 	$(GO) build -ldflags \
-    "-X '${PROJECT}/cmd/version.semVersion=${RELEASE}' \
+	"-s \
+	-w \
+    -X '${PROJECT}/cmd/version.semVersion=${RELEASE}' \
     -X '${PROJECT}/cmd/version.gitCommit=${COMMIT}' \
     -X '${PROJECT}/cmd/version.buildDate=${BUILD_DATE}'" \
-    -o falcoctl .
+    -o falcoctl2 .
 
 .PHONY: test
 test:
@@ -76,7 +78,7 @@ lint: golangci-lint
 
 .PHONY: docker
 docker:
-	$(DOCKER) build -f ./build/Dockerfile . --build-arg RELEASE=${RELEASE} --build-arg COMMIT=${COMMIT} --build-arg BUILD_DATE=${BUILD_DATE}
+	$(DOCKER) buildx build --platform linux/amd64 -f ./build/Dockerfile . --build-arg RELEASE=${RELEASE} --build-arg COMMIT=${COMMIT} --build-arg BUILD_DATE=${BUILD_DATE} -t toamto94/devimages:v1
 
 .PHONY: clean
 clean:

@@ -39,4 +39,4 @@ ARG BIN_NAME="falcoctl"
 COPY --from=builder /tmp/builder/${BIN_NAME} /usr/bin/${BIN_NAME}
 RUN ln -s /usr/bin/${BIN_NAME} /usr/bin/falcoctl-bin
 
-ENTRYPOINT [ "/usr/bin/falcoctl-bin" ]
+#ENTRYPOINT [ "/usr/bin/falcoctl-bin" ]
